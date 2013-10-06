@@ -12,6 +12,7 @@
     </script>
     <script type="text/javascript">
 
+	var directionResponse;
 	var directionsDisplay;
 	var directionsService = new google.maps.DirectionsService();
 	var map;
@@ -41,6 +42,8 @@
 	  directionsService.route(request, function(response, status) {
 	    if (status == google.maps.DirectionsStatus.OK) {
 	      directionsDisplay.setDirections(response);
+	      directionResponse = response;
+	      alert("Hello world");
 	    }
 	  });
 	}
