@@ -27,6 +27,7 @@
 	  };
 	  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 	  directionsDisplay.setMap(map);
+	  calcRouteTest();
 	}
 
 	
@@ -47,7 +48,27 @@
 	  });
 	}
 
+	function calcRouteTest() {
+	  var start = "chicago, il";
+	  var end = "denver, co";
+	  var request = {
+	      origin:start,
+	      destination:end,
+	      travelMode: google.maps.DirectionsTravelMode.DRIVING
+	  };
+	  directionsService.route(request, function(response, status) {
+	    if (status == google.maps.DirectionsStatus.OK) {
+	      directionsDisplay.setDirections(response);
+	      var directionResponse2 = response;
+	      console.log("Object : "+directionResponse2);
+	      testDirection(directionResponse2);	
+	    }
+	  });
+	}
 	
+	function testDirection(directionResponse2){
+		console.log("Object : "+directionResponse2);
+	}
 	
 	google.maps.event.addDomListener(window, 'load', initialize);
 
