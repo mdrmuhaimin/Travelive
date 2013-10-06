@@ -67,7 +67,7 @@
 	
 	function testDirection(directionResponse2) {
 		var myRoute = directionResponse2.routes[0].legs[0];
-		var spacing = 50000; //distance is measured in meters
+		var spacing = 160 * 1000; //distance is measured in meters
 		var runningTotal = spacing;
 
 		//Export coordinates as array
@@ -76,25 +76,31 @@
 		for(var i = 0; i < myRoute.steps.length; i++) {
 			var stepDistance = myRoute.steps[i].distance.value;
 			runningTotal -= stepDistance;
-			if(runningTotal < 0) { //If less than 0, then in this path, we are passing the spacing mark
+			while(runningTotal <= 0) { //If less than 0, then in this path, we are passing the spacing mark
 				var distancePerPoint = stepDistance / myRoute.steps[i].path.length;
-				var goodPoint = myRoute.steps[i].path[Math.round(Math.abs(runningTotal) / distancePerPoint)]; //Get point that is the right spacing away
+				var d = (stepDistance + runningTotal) / distancePerPoint;
+
+				var goodPoint = myRoute.steps[i].path[Math.round(d)];
 
 				coordinates.push(goodPoint); //Add to our coordinates
 
-				runningTotal = spacing;
-			}
-
-			if(i == myRoute.steps.length - 1) {
-				//Add last point to route even if not past spacings
-				coordinates.push(myRoute.steps[i].end_location);
+				runningTotal += spacing;
 			}
 		}
 
-		alert(coordinates.length);
+		//Add beginning and ending points
+		coordinates.push(myRoute.start_location);
+		coordinates.push(myRoute.end_location);
+
+		for (var i = 0; i < coordinates.length; i++) {
+		    var marker = new google.maps.Marker({
+		        position: coordinates[i],
+		        map: map
+		    });
+		}
 
 		for(var i = 0; i < coordinates.length; i++) {
-			alert(coordinates[i]);
+			console.log(coordinates[i]);
 		}
 		return coordinates;
 	}
