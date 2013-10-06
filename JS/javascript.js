@@ -117,7 +117,8 @@
 			position: coordinate,
 			text: temp,
 			map: map, 
-			strokeWeight: 10
+			strokeWeight: 10,
+			strokeColor: "#E6E6E6"
 		})
 
 	   	markers.push(marker);
