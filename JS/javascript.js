@@ -1,16 +1,3 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    <style type="text/css">
-      html { height: 100% }
-      body { height: 100%; margin: 0; padding: 0 }
-      #map-canvas { height: 100% }
-    </style>
-    <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAI0-13xCh4ulIbnTqpVE1NPxr9w3Qlg4Y&sensor=true">
-    </script>
-    <script type="text/javascript">
 
 	var directionResponse;
 	var directionsDisplay;
@@ -30,8 +17,6 @@
 	  directionsDisplay.setMap(map);
 	  calcRoute();
 	}
-
-	
 
 	function calcRoute() {
 	  var start = document.getElementById('start').value;
@@ -81,9 +66,37 @@
 		clearMarkers();
 
 		for(var i = 0; i < coordinates.length; i++) {
-			setMarker(coordinates[i], map);
+			wunderGroundFetch(coordinates[i], map);
 		}
 		return coordinates;
+	}
+
+	function wunderGroundFetch(coordinate, map){
+		var key = "31e5badd4441213c";
+		var url = "http://api.wunderground.com/api/"+key+"/conditions/q/"+coordinate.lat()+","+coordinate.lng()+".json";
+		console.log(url);
+		var weather; 
+		var temp;
+		var humidity; 
+					
+		jQuery(document).ready(function($) { 
+			weather = $.ajax({ 
+				url : url, 
+				dataType : "jsonp", 
+				success : function(parsed_json) { 
+					weather = parsed_json['current_observation']['icon_url']; 
+					temp = parsed_json['current_observation']['temperature_string'];
+					humidity = parsed_json['current_observation']['relative_humidity']; 
+					
+					console.log(weather);
+					console.log(temp);
+					console.log(humidity);
+
+					setMarker(coordinate, map, weather, temp);
+				}
+				
+			});
+		});
 	}
 
 	function clearMarkers() {
@@ -93,53 +106,23 @@
 		markers = [];
 	}
 
-	function setMarker(coordinate, map) {
+	function setMarker(coordinate, map, image, temp) {
 		var marker = new google.maps.Marker({
 		        position: coordinate,
+		        icon: image,
 		        map: map
 	   	});
+
+		var markerLabel = new MapLabel({
+			position: coordinate,
+			text: temp,
+			map: map, 
+			strokeWeight: 10
+		})
+
 	   	markers.push(marker);
+	   	markers.push(markerLabel);
 	}
 	
 	google.maps.event.addDomListener(window, 'load', initialize);
 
-    </script>
-  </head>
-  	
-  <body>
-    <div id="panel">
-    <b>Start: </b>
-    <select id="start" onchange="calcRoute();">
-      <option value="chicago, il">Chicago</option>
-      <option value="st louis, mo">St Louis</option>
-      <option value="joplin, mo">Joplin, MO</option>
-      <option value="oklahoma city, ok">Oklahoma City</option>
-      <option value="amarillo, tx">Amarillo</option>
-      <option value="gallup, nm">Gallup, NM</option>
-      <option value="flagstaff, az">Flagstaff, AZ</option>
-      <option value="winona, az">Winona</option>
-      <option value="kingman, az">Kingman</option>
-      <option value="barstow, ca">Barstow</option>
-      <option value="san bernardino, ca">San Bernardino</option>
-      <option value="los angeles, ca">Los Angeles</option>
-    </select>
-    <b>End: </b>
-    <select id="end" onchange="calcRoute();">
-      <option value="chicago, il">Chicago</option>
-      <option value="st louis, mo">St Louis</option>
-      <option value="joplin, mo">Joplin, MO</option>
-      <option value="oklahoma city, ok">Oklahoma City</option>
-      <option value="amarillo, tx">Amarillo</option>
-      <option value="gallup, nm">Gallup, NM</option>
-      <option value="flagstaff, az">Flagstaff, AZ</option>
-      <option value="winona, az">Winona</option>
-      <option value="kingman, az">Kingman</option>
-      <option value="barstow, ca">Barstow</option>
-      <option value="san bernardino, ca">San Bernardino</option>
-      <option value="los angeles, ca">Los Angeles</option>
-    </select>
-    </div>
-  	
-    <div id="map-canvas"/>
-  </body>
-</html>
