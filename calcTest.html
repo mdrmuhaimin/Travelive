@@ -16,6 +16,7 @@
 	var directionsDisplay;
 	var directionsService = new google.maps.DirectionsService();
 	var map;
+	var markers = new Array();
 
 	function initialize() {
 	  directionsDisplay = new google.maps.DirectionsRenderer();
@@ -27,7 +28,8 @@
 	  };
 	  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 	  directionsDisplay.setMap(map);
-	  calcRouteTest();
+	  // calcRouteTest();
+	  calcRoute();
 	}
 
 	
@@ -44,23 +46,7 @@
 	    if (status == google.maps.DirectionsStatus.OK) {
 	      directionsDisplay.setDirections(response);
 	      directionResponse = response;
-	    }
-	  });
-	}
-
-	function calcRouteTest() {
-	  var start = "chicago, il";
-	  var end = "denver, co";
-	  var request = {
-	      origin:start,
-	      destination:end,
-	      travelMode: google.maps.DirectionsTravelMode.DRIVING
-	  };
-	  directionsService.route(request, function(response, status) {
-	    if (status == google.maps.DirectionsStatus.OK) {
-	      directionsDisplay.setDirections(response);
-	      var directionResponse2 = response;
-	      testDirection(directionResponse2);	
+	      testDirection(directionResponse);
 	    }
 	  });
 	}
@@ -91,18 +77,29 @@
 		//Add beginning and ending points
 		coordinates.push(myRoute.start_location);
 		coordinates.push(myRoute.end_location);
-
-		for (var i = 0; i < coordinates.length; i++) {
-		    var marker = new google.maps.Marker({
-		        position: coordinates[i],
-		        map: map
-		    });
-		}
+		
+		clearMarkers();
 
 		for(var i = 0; i < coordinates.length; i++) {
-			console.log(coordinates[i]);
+			setMarker(coordinates[i], map);
+			// console.log(coordinates[i]);
 		}
 		return coordinates;
+	}
+
+	function clearMarkers() {
+		for (var i = 0; i < markers.length; i++) {
+    		markers[i].setMap(null);
+  		}
+		markers = [];
+	}
+
+	function setMarker(coordinate, map) {
+		var marker = new google.maps.Marker({
+		        position: coordinate,
+		        map: map
+	   	});
+	   	markers.push(marker);
 	}
 
 	
