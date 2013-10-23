@@ -15,7 +15,6 @@
 	  };
 	  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 	  directionsDisplay.setMap(map);
-	  calcRoute();
 	}
 
 	function calcRoute() {
@@ -38,7 +37,8 @@
 	
 	function testDirection(directionResponse2) {
 		var myRoute = directionResponse2.routes[0].legs[0];
-		var spacing = 160 * 1000; //distance is measured in meters
+		var weatherStationDistance = 100; // In mile
+		var spacing = weatherStationDistance * 1.6 * 1000; //distance is measured in meters and 1 mile = 1.6 * 1000 meters
 		var runningTotal = spacing;
 
 		//Export coordinates as array
@@ -68,7 +68,6 @@
 		for(var i = 0; i < coordinates.length; i++) {
 			wunderGroundFetch(coordinates[i], map);
 		}
-		return coordinates;
 	}
 
 	function wunderGroundFetch(coordinate, map){
